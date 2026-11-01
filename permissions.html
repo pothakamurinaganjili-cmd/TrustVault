@@ -1,4 +1,84 @@
-{% extends "base.html" %}{% block content %}<section class="panel"><h1>Access: {{ document.original_name }}</h1><p class="muted">Grant access to a named registered user. Revocation takes effect on the next request.</p>
-<form method="post" class="grant-form">{{ form.hidden_tag() }}<div><label>{{ form.email.label }}</label>{{ form.email(placeholder="person@company.com") }}</div><div><label>{{ form.permission.label }}</label>{{ form.permission() }}</div><button class="primary">Save permission</button></form>
-<h2>Current grants</h2><div class="table-wrap"><table><tr><th>User ID</th><th>Permission</th><th>Action</th></tr>
-{% for grant in grants %}<tr><td>{{ grant.user_id }}</td><td>{{ grant.permission|upper }}</td><td><form method="post" action="{{ url_for('revoke_permission', document_id=document.id, grant_id=grant.id) }}">{{ csrf_token() }}<button class="danger-link">Revoke</button></form></td></tr>{% else %}<tr><td colspan="3">No grants yet.</td></tr>{% endfor %}</table></div></section>{% endblock %}
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="panel">
+
+    <h1>Access: {{ document.original_name }}</h1>
+
+    <p class="muted">
+        Grant access to a named registered user.
+        Revocation takes effect on the next request.
+    </p>
+
+    <!-- Grant Permission Form -->
+    <form method="POST" class="grant-form">
+
+        {{ form.hidden_tag() }}
+
+        <div>
+            <label>{{ form.email.label }}</label>
+            {{ form.email(placeholder="person@company.com") }}
+        </div>
+
+        <div>
+            <label>{{ form.permission.label }}</label>
+            {{ form.permission() }}
+        </div>
+
+        <button class="primary" type="submit">
+            Save permission
+        </button>
+
+    </form>
+
+    <h2>Current grants</h2>
+
+    <div class="table-wrap">
+
+        <table>
+            <tr>
+                <th>User ID</th>
+                <th>Permission</th>
+                <th>Action</th>
+            </tr>
+
+            {% for grant in grants %}
+
+            <tr>
+                <td>{{ grant.user_id }}</td>
+
+                <td>{{ grant.permission|upper }}</td>
+
+                <td>
+                    <form method="POST"
+                          action="{{ url_for('revoke_permission', document_id=document.id, grant_id=grant.id) }}">
+
+                        <!-- CSRF Security Token -->
+                        <input type="hidden"
+                               name="csrf_token"
+                               value="{{ csrf_token() }}">
+
+                        <button class="danger-link" type="submit">
+                            Revoke
+                        </button>
+
+                    </form>
+                </td>
+            </tr>
+
+            {% else %}
+
+            <tr>
+                <td colspan="3">No grants yet.</td>
+            </tr>
+
+            {% endfor %}
+
+        </table>
+
+    </div>
+
+</section>
+
+{% endblock %}
