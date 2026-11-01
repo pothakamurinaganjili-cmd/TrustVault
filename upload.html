@@ -1,6 +1,45 @@
-{% extends "base.html" %}{% block content %}<section class="panel narrow"><h1>Upload document</h1><p class="muted">Files are stored outside the public web directory.</p>
-<form method="post" enctype="multipart/form-data">{{ csrf_token() }}
-<label>Choose file</label><input type="file" name="file" required>
-<label>Category</label><input name="category" maxlength="80" value="General">
-<p class="tiny">Allowed: PDF, DOCX, XLSX, TXT, PNG, JPG. Maximum 10 MB.</p>
-<button class="primary" type="submit">Upload securely</button></form></section>{% endblock %}
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="panel narrow">
+
+    <h1>Upload document</h1>
+
+    <p class="muted">
+        Files are stored outside the public web directory.
+    </p>
+
+    <form method="POST" enctype="multipart/form-data">
+
+        <!-- CSRF Security Token -->
+        <input type="hidden"
+               name="csrf_token"
+               value="{{ csrf_token() }}">
+
+        <label>Choose file</label>
+        <input type="file"
+               name="file"
+               accept=".pdf,.docx,.xlsx,.txt,.png,.jpg,.jpeg"
+               required>
+
+        <label>Category</label>
+        <input type="text"
+               name="category"
+               maxlength="80"
+               value="General">
+
+        <p class="tiny">
+            Allowed: PDF, DOCX, XLSX, TXT, PNG, JPG.
+            Maximum 10 MB.
+        </p>
+
+        <button class="primary" type="submit">
+            Upload securely
+        </button>
+
+    </form>
+
+</section>
+
+{% endblock %}
