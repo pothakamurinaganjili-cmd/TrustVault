@@ -142,15 +142,39 @@ def admin_required(fn):
     return wrapper
 
 def get_document_access(document_id, required="read"):
-    """The central server-side authorisation check used by every document route."""
+    """Central server-side authorization check."""
+
     document = db.session.get(Document, document_id)
+
     if document is None:
         return None, False
+
+    # Admin and document owner have full access
     if current_user.role == "admin" or document.owner_id == current_user.id:
         return document, True
-    grant = Grant.query.filter_by(document_id=document.id, user_id=current_user.id).first()
-    allowed = bool(grant and (grant.permission == "edit" or required == "read"))
-    return document, allowed
+
+    # Check user's permission
+    grant = Grant.query.filter_by(
+        document_id=document.id,
+        user_id=current_user.id
+    ).first()
+
+    if grant is None:
+        return document, False
+
+    # Only valid permissions are accepted
+    if grant.permission not in ("read", "edit"):
+        return document, False
+
+    # Edit permission allows both reading and editing
+    if grant.permission == "edit":
+        return document, True
+
+    # Read permission allows reading only
+    if grant.permission == "read" and required == "read":
+        return document, True
+
+    return document, False
 
 def document_access_required(required="read"):
     def decorator(fn):
@@ -389,3 +413,5 @@ def create_app(test_config=None):
     return app
 
 app = create_app()
+if __name__ == "__main__":
+    app.run(debug=True)
