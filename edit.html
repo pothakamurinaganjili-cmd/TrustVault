@@ -1,0 +1,2 @@
+{% extends "base.html" %}{% block content %}<section class="panel narrow"><h1>Edit document details</h1>
+<form method="post">{{ form.hidden_tag() }}<label>Display name</label>{{ form.name() }}<label>Category</label>{{ form.category() }}<button class="primary">Save changes</button></form></section>{% endblock %}
