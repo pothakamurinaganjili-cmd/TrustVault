@@ -1,1 +1,7 @@
-
+{% extends "base.html" %}{% block title %}Sign in · TrustVault{% endblock %}
+{% block content %}<section class="login-card"><div class="shield">🔐</div><h1>TrustVault</h1><p class="muted">Secure document sharing</p>
+<form method="post">{{ form.hidden_tag() }}
+<label>Email</label>{{ form.email(placeholder="name@company.com", autocomplete="username") }}
+<label>Password</label>{{ form.password(placeholder="Your password", autocomplete="current-password") }}
+<button class="primary full" type="submit">Sign in</button></form>
+<p class="tiny">Access is checked by the server for every document request.</p></section>{% endblock %}
