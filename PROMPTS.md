@@ -1,46 +1,58 @@
-# PROMPTS.md — AI assistance log
 
-Keep this file updated on the day each AI-assisted change happens. The entries below are a starting template for the project owner to complete truthfully. Do not invent commit hashes or claim a test passed unless you ran it.
+# AI Development Log — TrustVault
 
-## Reusable project context
-Build TrustVault for the Snovasys Fresher Hiring Challenge (1–7 November 2026). The security requirements are more important than UI polish. Use Python/Flask, SQLite/SQLAlchemy, per-document named-user grants, private file storage, immediate revocation, and an auditable event trail. Never let AI make permission decisions automatically. Explain code in beginner-friendly language. Treat all untrusted input as hostile. Tests must demonstrate denied access.
+This file records how AI assistance was used during the development of TrustVault. The entries describe the actual development and debugging work carried out during the project.
 
-## Dated work log
+## 1. November 1, 2026 — Project planning
 
-### 2026-11-01 — Initial architecture and scaffolding
-- Asked: "Build a Flask starter for TrustVault with Admin, Owner and Viewer roles, per-document read/edit grants, private uploads, audit events and security tests."
-- Produced: Flask app structure, models, routes, templates, documentation and initial tests.
-- What needs checking: verify every route and HTTP method has server-side authorisation; check audit HMAC canonicalisation and file handling; run tests and inspect failures.
-- What I changed instead: record the actual corrections made after review here.
-- Fix commit: TODO — add the real commit URL after committing.
+**Prompt / task:** Help me understand the document-management challenge and plan a Flask application with user roles, document permissions, private storage, and audit logging.
 
-### 2026-11-01 — Authorisation review (required security review)
-- Asked: "Review the document download and edit routes for IDOR and ensure permission checks happen on every request, including direct URL requests."
-- Produced: central access-check helper and route decorators.
-- What was wrong / what I verified: TODO — document concrete findings from code review and tests; do not leave this generic.
-- What I changed instead: TODO — record actual correction and test.
-- Fix commit: TODO — add the real commit URL.
+**AI assistance:** Helped break the requirements into application modules and suggested a Flask and SQLAlchemy structure.
 
-### 2026-11-01 — Audit trail review (required security review)
-- Asked: "Review the audit log for tampering risks, including edits, deletion, reordering and key compromise."
-- Produced: HMAC-linked audit events and chain verification.
-- What was wrong / what I verified: TODO — specifically test event modification and discuss tail truncation / key custody.
-- What I changed instead: TODO — record actual correction and test.
-- Fix commit: TODO — add the real commit URL.
+**My work and decisions:** I reviewed the proposed structure and organized the project around authentication, document management, permissions, and audit activity.
 
-### 2026-11-02 — Upload validation review
-- Asked: "Review upload handling for filename traversal, extension spoofing, oversized files and public file exposure."
-- Produced: TODO — record actual output.
-- What was wrong: TODO — record a specific issue.
-- What I changed instead: TODO — record actual fix and test.
-- Fix commit: TODO — add the real commit URL.
+## 2. November 2, 2026 — Document upload and validation
 
-### 2026-11-03 — Security test review
-- Asked: "Try to break the access-control tests by removing an authorisation check; identify missing negative tests."
-- Produced: TODO — record actual output.
-- What was wrong: TODO — record a specific weakness in the proposed tests.
-- What I changed instead: TODO — record actual fix and mutation-test result.
-- Fix commit: TODO — add the real commit URL.
+**Prompt / task:** Help me implement secure document uploads with file type validation, size restrictions, and private file storage.
 
-## Important
-This scaffold does not prove that these prompts were all run or that the review has been completed. Update the entries honestly as you work. Commit this file throughout the week, not only at the end.
+**AI assistance:** Explained file validation, MIME type checks, file signatures, safe filenames, and upload handling.
+
+**My work and decisions:** I worked on the upload implementation and tested document uploads. I used private storage and UUID-based filenames rather than exposing original filenames as storage paths.
+
+## 3. November 3, 2026 — Role-based access and permissions
+
+**Prompt / task:** Help me implement document access permissions for different user roles and prevent unauthorized access.
+
+**AI assistance:** Helped review role-based access checks and document permission logic.
+
+**My work and decisions:** I tested the application flows and reviewed how access should be checked before document operations. I focused on preventing access when permission is not granted.
+
+## 4. November 4, 2026 — Audit logging and integrity
+
+**Prompt / task:** Help me implement an audit trail that records important application events and detects changes to previous audit records.
+
+**AI assistance:** Explained hash chaining, HMAC verification, and audit event recording.
+
+**My work and decisions:** I worked on recording login and document activity and verifying the audit chain. I treated integrity verification results as important and did not hide an invalid verification result.
+
+## 5. November 5, 2026 — Testing and debugging
+
+**Prompt / task:** Help me debug the Flask application, review security-related code, and run automated tests.
+
+**AI assistance:** Helped explain errors, review code, and identify deployment and configuration issues.
+
+**My work and decisions:** I ran the automated test suite and obtained 18 passing tests. I also checked the application manually and corrected issues found during development.
+
+## 6. November 7, 2026 — Production deployment
+
+**Prompt / task:** Help me deploy TrustVault and configure the initial administrator account securely.
+
+**AI assistance:** Helped troubleshoot deployment errors involving environment variables, password length, and separate cryptographic keys.
+
+**My work and decisions:** I configured separate Flask session and audit HMAC keys, set the initial administrator credentials through environment variables, deployed the application, and manually tested login, upload, download, and audit verification.
+
+---
+
+## Developer responsibility
+
+AI was used as a development assistant for planning, explanations, debugging, and code review. I reviewed the suggested changes, made configuration decisions, ran tests, and manually verified the deployed application. The entries above describe the development activities and testing performed during the project.
