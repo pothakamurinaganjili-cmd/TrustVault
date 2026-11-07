@@ -1,5 +1,8 @@
 import os
-import magic
+try:
+    import magic
+except ImportError:
+    magic = None
 import zipfile
 from io import BytesIO
 import uuid
@@ -526,6 +529,9 @@ def allowed_file(filename, uploaded_file):
         return False
 
     try:
+        if magic is None:
+            return False
+
         detected_type = magic.from_buffer(
             file_data[:8192],
             mime=True
