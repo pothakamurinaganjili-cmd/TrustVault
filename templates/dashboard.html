@@ -1,0 +1,17 @@
+{% extends "base.html" %}{% block title %}Documents · TrustVault{% endblock %}
+{% block content %}
+<div class="heading"><div><p class="eyebrow">{{ current_user.role|upper }} WORKSPACE</p><h1>Documents</h1><p class="muted">Hello {{ current_user.name }}. You only see documents you are authorised to access.</p></div>
+{% if current_user.role in ['owner','admin'] %}<a class="primary" href="{{ url_for('upload') }}">＋ Upload document</a>{% endif %}</div>
+<form method="get" class="search"><input name="q" placeholder="Search document name or category" value="{{ request.args.get('q','') }}"><button>Search</button></form>
+<div class="table-wrap"><table><thead><tr><th>Document</th><th>Category</th><th>Owner</th><th>Uploaded</th><th>Actions</th></tr></thead><tbody>
+{% for doc in documents if request.args.get('q','').lower() in (doc.original_name + ' ' + doc.category + ' ' + doc.owner.name).lower() %}
+<tr><td><strong>{{ doc.original_name }}</strong></td><td>{{ doc.category }}</td><td>{{ doc.owner.name }}</td><td>{{ doc.created_at.strftime('%Y-%m-%d') }}</td><td class="actions">
+<a href="{{ url_for('download', document_id=doc.id) }}">Download</a>
+{% if current_user.role == 'admin' or doc.owner_id == current_user.id %}
+<a href="{{ url_for('edit_document', document_id=doc.id) }}">Edit</a>
+<a href="{{ url_for('permissions', document_id=doc.id) }}">Access</a>
+<form method="post" action="{{ url_for('delete_document', document_id=doc.id) }}" class="inline" onsubmit="return confirm('Delete this document permanently?')"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="danger-link">Delete</button></form>
+{% endif %}</td></tr>
+{% else %}<tr><td colspan="5" class="empty">No accessible documents found.</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

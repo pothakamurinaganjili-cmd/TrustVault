@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="panel narrow">
+
+    <h1>Upload document</h1>
+
+    <p class="muted">
+        Files are stored outside the public web directory.
+    </p>
+
+    <form method="POST" enctype="multipart/form-data">
+
+        <!-- CSRF Security Token -->
+        <input type="hidden"
+               name="csrf_token"
+               value="{{ csrf_token() }}">
+
+        <label>Choose file</label>
+        <input type="file"
+               name="file"
+               accept=".pdf,.docx,.xlsx,.txt,.png,.jpg,.jpeg"
+               required>
+
+        <label>Category</label>
+        <select name="category" required>
+            <option value="PDF">PDF</option>
+            <option value="DOCX">DOCX</option>
+            <option value="XLSX">XLSX</option>
+            <option value="TXT">TXT</option>
+            <option value="PNG">PNG</option>
+            <option value="JPG">JPG / JPEG</option>
+        </select>
+
+        
+    <div style="margin-top: 20px;"></div>
+        <button class="primary" type="submit">
+            Upload securely
+        </button>
+
+    </form>
+
+</section>
+
+{% endblock %}

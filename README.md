@@ -1,62 +1,115 @@
+
 # TrustVault — Secure Document Sharing
 
-A Flask application demonstrating per-document permissions, private file storage, immediate revocation and a tamper-evident audit log.
+TrustVault is a Flask-based secure document-sharing application demonstrating role-based access, per-document permissions, private file storage, immediate access revocation, and a tamper-evident audit log.
+
+## Features
+
+- Admin, Owner, and Viewer roles.
+- Private document uploads and downloads.
+- Per-document Read and Edit permissions.
+- Immediate permission revocation.
+- Server-side document authorization.
+- User account activation and deactivation.
+- HMAC-based tamper-evident audit logging.
+- Signed audit checkpoint verification.
+- Audit verification endpoint.
+- Login rate limiting.
+- File extension, MIME type, signature, and structure validation.
+- CSRF protection and secure session-cookie settings.
 
 ## Requirements
+
 - Python 3.10+
 - pip
+- Windows PowerShell or another supported terminal
 
-## Local setup (Windows PowerShell)
+## Local Setup (Windows PowerShell)
+
+Open the project root directory in PowerShell.
+
+Create a virtual environment:
+
 ```powershell
 py -m venv venv
-.\venv\Scripts\Activate.ps1
+```
+
+Activate it:
+
+```powershell
+venv\Scripts\activate
+```
+
+Install dependencies:
+
+```powershell
 pip install -r requirements.txt
+```
+
+Initialize demo accounts only when setting up a fresh demo database:
+
+```powershell
 python seed.py
+```
+
+**Warning:** Do not run `seed.py` against your existing database without checking its behavior, because it may reset demo account data.
+
+## Run the Application
+
+```powershell
 python app.py
 ```
-Open http://127.0.0.1:5000
 
-If PowerShell blocks activation, use `venv\Scripts\activate.bat` in Command Prompt, or follow your organisation's approved PowerShell policy.
+Open this address in your browser:
 
-## Demo credentials
-These are local demonstration credentials only. Change all passwords and set strong environment secrets before deployment.
+http://127.0.0.1:5000
 
-| Role | Email | Password |
-|---|---|---|
-| Admin | admin@trustvault.local | AdminDemo!2026 |
-| Owner | owner@trustvault.local | OwnerDemo!2026 |
-| Viewer | viewer@trustvault.local | ViewerDemo!2026 |
+## Demo Accounts
 
-## Security configuration before deployment
-Set unique random values outside source control:
-- `TRUSTVAULT_SECRET_KEY`
-- `TRUSTVAULT_AUDIT_KEY`
-- `DATABASE_URL`
-- `TRUSTVAULT_UPLOAD_DIR`
-- `COOKIE_SECURE=1` when served only over HTTPS
+### Admin
+- Email: admin@example.com
+- Password: AdminDemo!2026
 
-Do not use the demo keys or demo passwords in production. Keep private uploads outside the web root. Use a production WSGI server (for example gunicorn) behind HTTPS. Restrict filesystem and database access.
+### Owner
+- Email: owner@example.com
+- Password: OwnerDemo!2026
 
-## Tests
+### Viewer
+- Email: viewer@example.com
+- Password: ViewerDemo!2026
+
+These credentials are for local demonstration only.
+Change demo passwords before deployment.
+
+## Run Tests
+
+Run the automated test suite:
+
 ```powershell
-pytest -q
+python -m pytest -q
 ```
 
-## Permission model
-- Admin: user administration, global document visibility, audit dashboard.
-- Owner: full control over documents they upload; can grant/revoke named-user access.
-- Viewer: read/download only when an explicit document grant exists.
-- Edit grant: permits read/download and metadata edit. It does not permit permission administration or deletion.
-- Only the owner or admin can grant/revoke access or delete a document.
-- Each document route checks access on the server. Unknown and unauthorised document IDs both return 404 to reduce ID enumeration.
+Current local test result: 18 tests passed.
 
-## Storage and audit
-Uploaded files receive random storage names and are stored in a private directory; original filenames are only display/download names. Download routes stream a file only after a fresh permission check.
+## Audit Integrity Status
 
-Audit events form an HMAC chain. The HMAC key is configured outside the database. This detects modification when the key is protected, but a single-host database and key are not a fully independent immutable audit service. Production hardening should export events to append-only remote storage/SIEM and separate key custody.
+The current local database audit verification reports INVALID.
 
-## API / route access summary
-See `API.md`.
+The first detected HMAC mismatch is Event ID 8.
+Events 8–35 fail HMAC verification, while the
+latest checkpoint matches the latest event hash.
 
-## Known limitations
-This is a challenge starter implementation, not a certified enterprise document vault. See `THREATS.md` for accepted risks and hardening work. Review and run the tests, add integration tests for your deployment, and never deploy demo credentials.
+The historical mismatch remains unresolved.
+No historical audit events were regenerated or deleted.
+
+This limitation is disclosed rather than hidden.
+
+## Security Notes
+
+- Uploaded files are stored in a private folder.
+- Document access is checked on the server.
+- Revoked permissions are denied on subsequent requests.
+- Production deployment requires secure environment variables,
+  HTTPS, and shared rate-limit storage such as Redis.
+- Local testing does not establish production security.
+
