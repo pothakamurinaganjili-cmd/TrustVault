@@ -1316,8 +1316,38 @@ def create_app(test_config=None):
 
     # ---------------- DATABASE ----------------
 
+       # ---------------- DATABASE ----------------
+
     with app.app_context():
         db.create_all()
+
+        admin_email = os.environ.get(
+            "TRUSTVAULT_ADMIN_EMAIL", ""
+        ).strip().lower()
+
+        admin_password = os.environ.get(
+            "TRUSTVAULT_ADMIN_PASSWORD", ""
+        )
+
+        if bool(admin_email) != bool(admin_password):
+            raise RuntimeError(
+                "Set both TRUSTVAULT_ADMIN_EMAIL and TRUSTVAULT_ADMIN_PASSWORD."
+            )
+
+        if admin_email and User.query.count() == 0:
+            if len(admin_password) < 16:
+                raise RuntimeError(
+                    "TRUSTVAULT_ADMIN_PASSWORD must be at least 16 characters."
+                )
+
+            admin = User(
+                name="TrustVault Admin",
+                email=admin_email,
+                role="admin"
+            )
+            admin.set_password(admin_password)
+            db.session.add(admin)
+            db.session.commit()
 
     return app
 
